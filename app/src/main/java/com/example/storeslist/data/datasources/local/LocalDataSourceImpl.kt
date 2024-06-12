@@ -1,6 +1,6 @@
 package com.example.storeslist.data.datasources.local
 
-import com.example.storeslist.data.models.Store
+import com.example.storeslist.domain.model.Store
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

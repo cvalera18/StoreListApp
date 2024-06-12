@@ -1,4 +1,4 @@
-package com.example.storeslist.data.models
+package com.example.storeslist.domain.model
 
 data class Store(
     val code: String,

@@ -1,7 +1,7 @@
 package com.example.storeslist.presentation.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.storeslist.data.models.Store
+import com.example.storeslist.domain.model.Store
 
 class StoreDiffCallback(private val oldList: List<Store>, private val newList: List<Store>) :
     DiffUtil.Callback() {

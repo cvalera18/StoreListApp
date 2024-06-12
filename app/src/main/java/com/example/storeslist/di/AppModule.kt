@@ -1,6 +1,7 @@
 package com.example.storeslist.di
 
 import com.example.storeslist.data.datasources.local.LocalDataSource
+import com.example.storeslist.data.datasources.remote.FrogmiRemoteDataSource
 import com.example.storeslist.data.repository.StoreRepositoryImpl
 import com.example.storeslist.domain.repository.StoreRepository
 import dagger.Module
@@ -14,7 +15,9 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideStoreRepository(dataSource: LocalDataSource): StoreRepository {
-        return StoreRepositoryImpl(dataSource)
+    fun provideStoreRepository(
+        remoteDataSource: FrogmiRemoteDataSource
+    ): StoreRepository {
+        return StoreRepositoryImpl(remoteDataSource)
     }
 }

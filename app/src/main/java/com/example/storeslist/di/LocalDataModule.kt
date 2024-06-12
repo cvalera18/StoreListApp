@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object LocalDataModule {
     @Provides
     @Singleton
     fun provideStoreLocalDataSource(): LocalDataSource = LocalDataSourceImpl()

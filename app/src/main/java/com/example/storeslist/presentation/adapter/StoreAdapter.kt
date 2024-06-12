@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.storeslist.data.models.Store
+import com.example.storeslist.domain.model.Store
 import com.example.storeslist.databinding.ItemStoreListBinding
 
 class StoreAdapter(private var stores: List<Store>) : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>() {

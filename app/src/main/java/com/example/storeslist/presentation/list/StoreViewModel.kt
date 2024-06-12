@@ -1,21 +1,50 @@
 package com.example.storeslist.presentation.list
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.storeslist.domain.usecases.GetStoresUseCaseFlow
+import com.example.storeslist.domain.model.Store
+import com.example.storeslist.domain.usecases.GetStoresUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class StoreViewModel @Inject constructor(
-    getAllStoresUseCase: GetStoresUseCaseFlow
+    private val getStoresUseCase: GetStoresUseCase
 ) : ViewModel() {
-    val allStores = getAllStoresUseCase.invoke()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5_000),
-            emptyList()
-        )
+
+    private val _stores = MutableStateFlow<List<Store>>(emptyList())
+    val stores: StateFlow<List<Store>> get() = _stores
+    private var currentPage = INITIAL_PAGE
+
+    fun fetchStores(perPage: Int, page: Int) {
+        viewModelScope.launch {
+            getStoresUseCase(perPage, page)
+                .catch { e ->
+                    // Manejar el error
+                    Log.e("StoreViewModel", "Error fetching stores", e)
+                }
+                .collect { storeList ->
+                    _stores.value = _stores.value + storeList
+                    currentPage = page
+                }
+        }
+    }
+
+    fun getCurrentPage(): Int {
+        return currentPage
+    }
+
+    companion object {
+        private const val INITIAL_PAGE = 1
+    }
 }
+
