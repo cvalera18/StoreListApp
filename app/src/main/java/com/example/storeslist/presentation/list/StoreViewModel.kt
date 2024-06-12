@@ -31,6 +31,7 @@ class StoreViewModel @Inject constructor(
     private var currentPage = INITIAL_PAGE
 
     fun fetchStores(perPage: Int, page: Int) {
+        _isLoading.value = true
         viewModelScope.launch {
             getStoresUseCase(perPage, page)
                 .catch { e ->
@@ -40,8 +41,8 @@ class StoreViewModel @Inject constructor(
                 }
                 .collect { storeList ->
                     _stores.value += storeList
-                    _isLoading.value = false
                     currentPage = page
+                    _isLoading.value = false
                 }
         }
     }

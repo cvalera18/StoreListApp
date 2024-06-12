@@ -23,7 +23,6 @@ class ListFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: StoreAdapter
     private val viewModel: StoreViewModel by viewModels()
-    private var isLoading = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,8 +34,8 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        observeViewModel()
         setupSwipeRefresh()
+        observeViewModel()
         viewModel.fetchStores(PER_PAGE, INITIAL_PAGE)
     }
 
@@ -46,7 +45,6 @@ class ListFragment : Fragment() {
                 viewModel.stores.collect { storeList ->
                     Log.d("ListFragment", "Store list updated: $storeList")
                     adapter.updateStores(storeList)
-                    isLoading = false // Reset loading state after data is loaded
                 }
             }
         }
@@ -70,8 +68,7 @@ class ListFragment : Fragment() {
                 val totalItemCount = llmanager.itemCount
                 val pastVisibleItems = llmanager.findFirstVisibleItemPosition()
 
-                if (!isLoading && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                    isLoading = true
+                if (!viewModel.isLoading.value!! && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
                     viewModel.fetchStores(
                         PER_PAGE,
                         viewModel.getCurrentPage() + 1
