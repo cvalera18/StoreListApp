@@ -33,7 +33,7 @@ class StoreViewModel @Inject constructor(
                     Log.e("StoreViewModel", "Error fetching stores", e)
                 }
                 .collect { storeList ->
-                    _stores.value = _stores.value + storeList
+                    _stores.value += storeList
                     currentPage = page
                 }
         }
