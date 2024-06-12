@@ -36,6 +36,7 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         observeViewModel()
+        setupSwipeRefresh()
         viewModel.fetchStores(PER_PAGE, INITIAL_PAGE)
     }
 
@@ -48,6 +49,9 @@ class ListFragment : Fragment() {
                     isLoading = false // Reset loading state after data is loaded
                 }
             }
+        }
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.swipe.isRefreshing = isLoading
         }
     }
 
@@ -75,6 +79,12 @@ class ListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipe.setOnRefreshListener {
+            viewModel.fetchStores(PER_PAGE, INITIAL_PAGE)
+        }
     }
 
     override fun onDestroyView() {

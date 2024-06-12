@@ -23,6 +23,11 @@ class StoreViewModel @Inject constructor(
 
     private val _stores = MutableStateFlow<List<Store>>(emptyList())
     val stores: StateFlow<List<Store>> get() = _stores
+
+    /* I can do this with Flow too, but I used LiveData to show how we can use it.
+    Additionally, LiveData is more effective due to its direct integration with the lifecycle of the views */
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
     private var currentPage = INITIAL_PAGE
 
     fun fetchStores(perPage: Int, page: Int) {
@@ -30,10 +35,12 @@ class StoreViewModel @Inject constructor(
             getStoresUseCase(perPage, page)
                 .catch { e ->
                     // Manejar el error
+                    _isLoading.value = false
                     Log.e("StoreViewModel", "Error fetching stores", e)
                 }
                 .collect { storeList ->
                     _stores.value += storeList
+                    _isLoading.value = false
                     currentPage = page
                 }
         }
