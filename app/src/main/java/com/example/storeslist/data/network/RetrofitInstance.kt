@@ -1,4 +1,4 @@
-package com.example.storeslist.network
+package com.example.storeslist.data.network
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,6 +14,7 @@ object RetrofitInstance {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(HttpErrorInterceptor())
         .build()
 
     val api: FrogmiApiService by lazy {

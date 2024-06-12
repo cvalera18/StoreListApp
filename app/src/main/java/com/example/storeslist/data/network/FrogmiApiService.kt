@@ -1,4 +1,4 @@
-package com.example.storeslist.network
+package com.example.storeslist.data.network
 
 import com.example.storeslist.domain.model.StoreResponse
 import retrofit2.http.GET

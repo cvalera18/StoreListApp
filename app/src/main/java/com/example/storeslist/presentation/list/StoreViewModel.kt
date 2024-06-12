@@ -28,6 +28,10 @@ class StoreViewModel @Inject constructor(
     Additionally, LiveData is more effective due to its direct integration with the lifecycle of the views */
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
+
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> get() = _error
+
     private var currentPage = INITIAL_PAGE
 
     fun fetchStores(perPage: Int, page: Int) {
@@ -35,7 +39,7 @@ class StoreViewModel @Inject constructor(
         viewModelScope.launch {
             getStoresUseCase(perPage, page)
                 .catch { e ->
-                    // Manejar el error
+                    _error.value = e.message
                     _isLoading.value = false
                     Log.e("StoreViewModel", "Error fetching stores", e)
                 }
@@ -49,6 +53,10 @@ class StoreViewModel @Inject constructor(
 
     fun getCurrentPage(): Int {
         return currentPage
+    }
+
+    fun clearError() {
+        _error.value = null
     }
 
     companion object {
