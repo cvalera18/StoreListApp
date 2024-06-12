@@ -1,4 +1,4 @@
-package com.example.storeslist
+package com.example.storeslist.presentation
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
