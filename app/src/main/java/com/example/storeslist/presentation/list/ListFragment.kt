@@ -5,7 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storeslist.databinding.FragmentListBinding
 import com.example.storeslist.presentation.adapter.StoreAdapter
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -55,7 +56,15 @@ class ListFragment : Fragment() {
 
         viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                val snackbar = Snackbar.make(binding.root, it, Snackbar.LENGTH_INDEFINITE)
+                snackbar.setAction("Cerrar") {
+                    snackbar.dismiss()
+                }
+                // Permitir múltiples líneas
+                val snackbarView = snackbar.view
+                val textView = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                textView.maxLines = 5
+                snackbar.show()
                 viewModel.clearError()
             }
         }
