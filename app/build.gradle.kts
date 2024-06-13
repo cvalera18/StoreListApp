@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
+    id("io.realm.kotlin") version "1.13.0"
     kotlin("kapt")
 }
 
@@ -84,12 +85,14 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
 
+    implementation(libs.realm.base)  // Añadido para Realm
+
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
     testImplementation(libs.junit)
-    testImplementation (libs.mockwebserver)
+    testImplementation(libs.mockwebserver)
 //    androidTestImplementation(libs.androidx.junit)
 //    androidTestImplementation(libs.androidx.espresso.core)
 }

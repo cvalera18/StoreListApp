@@ -60,7 +60,7 @@ class ListFragment : Fragment() {
                 snackbar.setAction("Cerrar") {
                     snackbar.dismiss()
                 }
-                // Permitir múltiples líneas
+                // Multiline for the snackbar
                 val snackbarView = snackbar.view
                 val textView = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
                 textView.maxLines = 5
