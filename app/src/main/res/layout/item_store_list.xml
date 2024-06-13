@@ -21,11 +21,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/store_icon"
             android:drawablePadding="6dp"
             android:text="Store 1"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:drawableStartCompat="@drawable/store_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,13 +60,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginBottom="10dp"
-            android:drawableStart="@drawable/map_marker"
             android:drawablePadding="6dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:maxEms="20"
             android:text="Presidente Errazuriz 4125, Santiago, Chile"
             android:textSize="14sp"
+            app:drawableStartCompat="@drawable/map_marker"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
