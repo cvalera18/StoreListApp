@@ -41,7 +41,6 @@ class StoreViewModel @Inject constructor(
                 .catch { e ->
                     _error.value = e.message
                     _isLoading.value = false
-                    Log.e("StoreViewModel", "Error fetching stores", e)
                 }
                 .collect { storeList ->
                     _stores.value += storeList
