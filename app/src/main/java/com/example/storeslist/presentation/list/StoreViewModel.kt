@@ -41,7 +41,7 @@ class StoreViewModel @Inject constructor(
         if (networkUtils.isInternetAvailable()) {
             _isLoading.value = true
             if (wasOffline) {
-                clearStores()  // Clean the list whe the internet is back
+                clearStores()  // Clean the list when the internet is back
                 currentPage = INITIAL_PAGE
                 wasOffline = false
             }
@@ -77,6 +77,7 @@ class StoreViewModel @Inject constructor(
                         }
                 }
             }
+            _isLoading.value = false
             _error.value = "No internet connection" // Set the error value for no internet
         }
     }
@@ -94,7 +95,7 @@ class StoreViewModel @Inject constructor(
     }
 
     companion object {
-        private const val INITIAL_PAGE = 1
+        internal const val INITIAL_PAGE = 1
         private const val PER_PAGE = 10
     }
 }
