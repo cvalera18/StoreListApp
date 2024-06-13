@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -74,6 +75,22 @@ class HttpErrorInterceptorTest {
             Assert.fail("Exception was not thrown")
         } catch (e: IOException) {
             Assert.assertTrue(e.message!!.contains("Internal Server Error: Internal Server Error"))
+        }
+    }
+
+    @Test
+    fun `intercept should throw IOException for network errors`() {
+        mockWebServer.enqueue(MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START))
+
+        val request = Request.Builder()
+            .url(mockWebServer.url("/"))
+            .build()
+
+        try {
+            okHttpClient.newCall(request).execute()
+            Assert.fail("Exception was not thrown")
+        } catch (e: IOException) {
+            Assert.assertTrue(e.message!!.contains("Network error"))
         }
     }
     // We can add more test for every case
