@@ -90,6 +90,7 @@ dependencies {
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
     testImplementation(libs.junit)
+    testImplementation (libs.mockwebserver)
 //    androidTestImplementation(libs.androidx.junit)
 //    androidTestImplementation(libs.androidx.espresso.core)
 }
