@@ -7,7 +7,6 @@ import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.RealmResults
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class LocalDataSourceImpl(private val realm: Realm) : LocalDataSource {
 
