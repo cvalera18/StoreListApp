@@ -1,4 +1,4 @@
-package com.example.storeslist.domain.model
+package com.example.storeslist.data.model
 
 // Modelo principal de la respuesta de la API
 data class StoreResponse(

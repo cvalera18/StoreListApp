@@ -1,6 +1,6 @@
 package com.example.storeslist.data.network
 
-import com.example.storeslist.domain.model.StoreResponse
+import com.example.storeslist.data.model.StoreResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query

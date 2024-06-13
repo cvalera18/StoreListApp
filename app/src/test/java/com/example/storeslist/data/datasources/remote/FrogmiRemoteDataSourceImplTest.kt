@@ -2,13 +2,12 @@ package com.example.storeslist.data.datasources.remote
 
 import com.example.storeslist.data.network.FrogmiApiService
 import com.example.storeslist.domain.mapper.toStore
-import com.example.storeslist.domain.model.Links
-import com.example.storeslist.domain.model.Meta
-import com.example.storeslist.domain.model.Pagination
-import com.example.storeslist.domain.model.Store
-import com.example.storeslist.domain.model.StoreAttributes
-import com.example.storeslist.domain.model.StoreData
-import com.example.storeslist.domain.model.StoreResponse
+import com.example.storeslist.data.model.Links
+import com.example.storeslist.data.model.Meta
+import com.example.storeslist.data.model.Pagination
+import com.example.storeslist.data.model.StoreAttributes
+import com.example.storeslist.data.model.StoreData
+import com.example.storeslist.data.model.StoreResponse
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK

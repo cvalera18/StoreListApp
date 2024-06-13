@@ -1,7 +1,7 @@
 package com.example.storeslist.domain.mapper
 
-import com.example.storeslist.domain.model.StoreAttributes
-import com.example.storeslist.domain.model.StoreData
+import com.example.storeslist.data.model.StoreAttributes
+import com.example.storeslist.data.model.StoreData
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
