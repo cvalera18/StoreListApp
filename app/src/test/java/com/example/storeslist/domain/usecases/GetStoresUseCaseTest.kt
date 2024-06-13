@@ -55,7 +55,7 @@ class GetStoresUseCaseTest {
         // given
         coEvery { storeRepository.getStores(any(), any()) } returns flow { emit(emptyList()) }
 
-        // when
+        //when
         val result = getStoresUseCase(10, 1)
 
         // then

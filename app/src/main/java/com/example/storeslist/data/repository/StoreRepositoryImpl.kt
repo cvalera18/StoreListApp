@@ -18,9 +18,13 @@ class StoreRepositoryImpl @Inject constructor(
     override fun getStores(perPage: Int, page: Int): Flow<List<Store>> {
         return flow {
             if (networkUtils.isInternetAvailable()) {
-                val remoteStores = remoteDataSource.getStores(perPage, page)
-                localDataSource.saveStores(remoteStores)
-                emit(remoteStores)
+                try {
+                    val remoteStores = remoteDataSource.getStores(perPage, page)
+                    localDataSource.saveStores(remoteStores)
+                    emit(remoteStores)
+                } catch (e: Exception) {
+                    emitAll(localDataSource.getStores())
+                }
             } else {
                 emitAll(localDataSource.getStores())
             }
