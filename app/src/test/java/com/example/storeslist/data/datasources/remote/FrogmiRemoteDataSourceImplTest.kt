@@ -32,7 +32,7 @@ class FrogmiRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `getStores should return list of stores from api`() = runTest {
+    fun `getInitialStores should return first stores list page response from api`() = runTest {
         // Given
         val storeDataList = listOf(
             StoreData(id = "1", type = "store", attributes = StoreAttributes(name = "Store 1", code = "1", full_address = "Address 1")),
@@ -43,14 +43,54 @@ class FrogmiRemoteDataSourceImplTest {
             meta = Meta(Pagination(current_page = 1, total = 121, per_page = 10)),
             links = Links(prev = null, next = null, first = "first", last = "last", self = "self")
         )
-        coEvery { apiService.getStores(any(), any(), any(), any()) } returns response
+        coEvery { apiService.getStores(any(), any(), 10, 1) } returns response
 
         // When
-//        val result = remoteDataSource.getStores(10, 1)
+        val result = remoteDataSource.getInitialStores()
 
         // Then
-        val expectedStores = storeDataList.map { it.toStore() }
-//        assertEquals(expectedStores, result)
+        assertEquals(response, result)
     }
+
+    @Test(expected = Exception::class)
+    fun `getInitialStores should return exception when api returns error`() = runTest {
+        // Given
+        coEvery { apiService.getStores(any(), any(), 10, 1) } throws Exception()
+
+        // When
+        remoteDataSource.getInitialStores()
+    }
+    @Test
+    fun `getNextStorePage should return next stores list page response from api`() = runTest {
+        // Given
+        val storeDataList = listOf(
+            StoreData(id = "1", type = "store", attributes = StoreAttributes(name = "Store 1", code = "1", full_address = "Address 1")),
+            StoreData(id = "2", type = "store", attributes = StoreAttributes(name = "Store 2", code = "2", full_address = "Address 2"))
+        )
+        val response = StoreResponse(
+            data = storeDataList,
+            meta = Meta(Pagination(current_page = 2, total = 121, per_page = 10)),
+            links = Links(prev = null, next = null, first = "first", last = "last", self = "self")
+        )
+        val nextPage = "Url"
+        coEvery { apiService.getNextStoresPage(any(), any(), nextPage) } returns response
+
+        // When
+        val result = remoteDataSource.getNextStorePage(nextPage)
+
+        // Then
+        assertEquals(response, result)
+    }
+
+    @Test(expected = Exception::class)
+    fun `getNextStorePage should return exception when api returns error`() = runTest {
+        // Given
+        val nextPage = "Url"
+        coEvery { apiService.getNextStoresPage(any(), any(), nextPage) } throws Exception()
+
+        // When
+        remoteDataSource.getNextStorePage(nextPage)
+    }
+
 }
 

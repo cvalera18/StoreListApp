@@ -4,13 +4,24 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.storeslist.MainDispatcherRule
 import com.example.storeslist.data.datasources.local.LocalDataSource
 import com.example.storeslist.data.datasources.remote.FrogmiRemoteDataSource
+import com.example.storeslist.data.model.Links
+import com.example.storeslist.data.model.Meta
+import com.example.storeslist.data.model.Pagination
+import com.example.storeslist.data.model.StoreAttributes
+import com.example.storeslist.data.model.StoreData
+import com.example.storeslist.data.model.StoreResponse
 import com.example.storeslist.data.network.NetworkUtils
+import com.example.storeslist.domain.mapper.toStore
 import com.example.storeslist.domain.model.Store
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockk
+import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -25,93 +36,108 @@ import org.junit.Test
 class StoreRepositoryImplTest {
 
     @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
-
-    @get:Rule
     val mockkRule = MockKRule(this)
 
-    @RelaxedMockK
+    @MockK
     private lateinit var remoteDataSource: FrogmiRemoteDataSource
 
     @RelaxedMockK
     private lateinit var localDataSource: LocalDataSource
 
-    @RelaxedMockK
+    @MockK
     private lateinit var networkUtils: NetworkUtils
 
     private lateinit var storeRepository: StoreRepositoryImpl
 
     @Before
     fun setUp() {
-        MockKAnnotations.init(this, relaxUnitFun = true)
+        MockKAnnotations.init(this)
         storeRepository = StoreRepositoryImpl(remoteDataSource, localDataSource, networkUtils)
     }
 
     @Test
-    fun `getStores should fetch from remote and save to local when online`() = runTest {
+    fun `getStores should call getInitialStores from remoteDataSource`() = runTest {
         // given
-        val perPage = 10
-        val page = 1
-        val remoteStores = listOf(
-            Store("ST001", "Store 1", "123 Main St"),
-            Store("ST002", "Store 2", "456 Main St")
-        )
+        every { networkUtils.isInternetAvailable() } returns true
 
-        coEvery { networkUtils.isInternetAvailable() } returns true
-//        coEvery { remoteDataSource.getStores(perPage, page) } returns remoteStores
+        val storeDataList = listOf(
+            StoreData(
+                id = "1",
+                type = "store",
+                attributes = StoreAttributes(
+                    name = "Store 1",
+                    code = "1",
+                    full_address = "Address 1"
+                )
+            ),
+            StoreData(
+                id = "2",
+                type = "store",
+                attributes = StoreAttributes(
+                    name = "Store 2",
+                    code = "2",
+                    full_address = "Address 2"
+                )
+            )
+        )
+        val response = StoreResponse(
+            data = storeDataList,
+            meta = Meta(Pagination(current_page = 1, total = 121, per_page = 10)),
+            links = Links(prev = null, next = null, first = "first", last = "last", self = "self")
+        )
+        coEvery { remoteDataSource.getInitialStores() } returns response
 
         // when
-//        val result = storeRepository.localStore().toList()
+        storeRepository.getStores()
 
         // then
-        coVerify { localDataSource.saveStores(remoteStores) }
-//        assertEquals(remoteStores, result.first())
+        coVerify { remoteDataSource.getInitialStores() }
     }
 
     @Test
-    fun `getStores should fetch from local when offline`() = runTest {
-        // given
-        val perPage = 10
-        val page = 1
-        val localStores = listOf(
-            Store("ST001", "Store 1", "123 Main St"),
-            Store("ST002", "Store 2", "456 Main St")
-        )
+    fun `When getInitialStores is successful, saveStores in localDataSource should be called`() =
+        runTest {
+            // given
+            every { networkUtils.isInternetAvailable() } returns true
 
-        coEvery { networkUtils.isInternetAvailable() } returns false
-        coEvery { localDataSource.getStores() } returns flowOf(localStores)
+            val storeDataList = listOf(
+                StoreData(
+                    id = "1",
+                    type = "store",
+                    attributes = StoreAttributes(
+                        name = "Store 1",
+                        code = "1",
+                        full_address = "Address 1"
+                    )
+                ),
+                StoreData(
+                    id = "2",
+                    type = "store",
+                    attributes = StoreAttributes(
+                        name = "Store 2",
+                        code = "2",
+                        full_address = "Address 2"
+                    )
+                )
+            )
+            val response = StoreResponse(
+                data = storeDataList,
+                meta = Meta(Pagination(current_page = 1, total = 121, per_page = 10)),
+                links = Links(
+                    prev = null,
+                    next = null,
+                    first = "first",
+                    last = "last",
+                    self = "self"
+                )
+            )
+            val storeList = response.data.map { it.toStore() }
+            coEvery { remoteDataSource.getInitialStores() } returns response
 
-        // when
-//        val result = storeRepository.localStore().toList()
+            // when
+            storeRepository.getStores()
 
-        // then
-//        coVerify(exactly = 0) { remoteDataSource.getStores(any(), any()) }
-//        assertEquals(localStores, result.first())
-    }
-
-    @Test
-    fun `getStores should handle errors from remote source gracefully`() = runTest {
-        // given
-        val perPage = 10
-        val page = 1
-        val localStores = listOf(
-            Store("ST001", "Store 1", "123 Main St"),
-            Store("ST002", "Store 2", "456 Main St")
-        )
-
-        coEvery { networkUtils.isInternetAvailable() } returns true
-//        coEvery { remoteDataSource.getStores(perPage, page) } throws IOException("Remote source error")
-        coEvery { localDataSource.getStores() } returns flowOf(localStores)
-
-        // when
-//        val result = storeRepository.localStore().first()
-
-        // then
-//        coVerify { remoteDataSource.getStores(perPage, page) }
-        coVerify { localDataSource.getStores() }
-//        assertEquals(localStores, result)
-    }
+            // then
+            coVerify { localDataSource.saveStores(storeList) }
+        }
 }

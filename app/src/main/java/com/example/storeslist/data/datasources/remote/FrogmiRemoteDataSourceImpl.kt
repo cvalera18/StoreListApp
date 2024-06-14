@@ -4,6 +4,8 @@ import com.example.storeslist.BuildConfig
 import com.example.storeslist.data.model.StoreResponse
 import com.example.storeslist.data.network.FrogmiApiService
 
+private const val PAGE_SIZE = 10
+private const val FIRST_PAGE = 1
 class FrogmiRemoteDataSourceImpl(
     private val apiService: FrogmiApiService
 ) : FrogmiRemoteDataSource {
@@ -11,8 +13,8 @@ class FrogmiRemoteDataSourceImpl(
     private val token = BuildConfig.BEARER_TOKEN
     private val companyId = BuildConfig.COMPANY_UUID
 
-    override suspend fun getInitialStores(perPage: Int, page: Int): StoreResponse {
-        val response = apiService.getStores("Bearer $token", companyId, perPage, page)
+    override suspend fun getInitialStores(): StoreResponse {
+        val response = apiService.getStores("Bearer $token", companyId, PAGE_SIZE, FIRST_PAGE)
         return response
     }
 
