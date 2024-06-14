@@ -26,8 +26,9 @@ class StoreRepositoryImpl(
 
                 val remoteStores = when {
                     currentPageInfo == null -> {
+                        val initialStores = remoteDataSource.getInitialStores()
                         localDataSource.clearStores()
-                        remoteDataSource.getInitialStores()
+                        initialStores
                     } // First Page
                     currentPageInfo.next != null -> remoteDataSource.getNextStorePage(
                         currentPageInfo.next
