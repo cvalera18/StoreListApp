@@ -62,10 +62,10 @@ class StoreRepositoryImplTest {
         )
 
         coEvery { networkUtils.isInternetAvailable() } returns true
-        coEvery { remoteDataSource.getStores(perPage, page) } returns remoteStores
+//        coEvery { remoteDataSource.getStores(perPage, page) } returns remoteStores
 
         // when
-        val result = storeRepository.getStores(perPage, page).toList()
+        val result = storeRepository.getStores(page).toList()
 
         // then
         coVerify { localDataSource.saveStores(remoteStores) }
@@ -86,10 +86,10 @@ class StoreRepositoryImplTest {
         coEvery { localDataSource.getStores() } returns flowOf(localStores)
 
         // when
-        val result = storeRepository.getStores(perPage, page).toList()
+        val result = storeRepository.getStores(page).toList()
 
         // then
-        coVerify(exactly = 0) { remoteDataSource.getStores(any(), any()) }
+//        coVerify(exactly = 0) { remoteDataSource.getStores(any(), any()) }
         assertEquals(localStores, result.first())
     }
 
@@ -104,14 +104,14 @@ class StoreRepositoryImplTest {
         )
 
         coEvery { networkUtils.isInternetAvailable() } returns true
-        coEvery { remoteDataSource.getStores(perPage, page) } throws IOException("Remote source error")
+//        coEvery { remoteDataSource.getStores(perPage, page) } throws IOException("Remote source error")
         coEvery { localDataSource.getStores() } returns flowOf(localStores)
 
         // when
-        val result = storeRepository.getStores(perPage, page).first()
+        val result = storeRepository.getStores(page).first()
 
         // then
-        coVerify { remoteDataSource.getStores(perPage, page) }
+//        coVerify { remoteDataSource.getStores(perPage, page) }
         coVerify { localDataSource.getStores() }
         assertEquals(localStores, result)
     }

@@ -39,7 +39,7 @@ class GetStoresUseCaseTest {
             Store(code = "1", name = "Store 1", address = "Address 1"),
             Store(code = "2", name = "Store 2", address = "Address 2")
         )
-        coEvery { storeRepository.getStores(any(), any()) } returns flow { emit(storeList) }
+        coEvery { storeRepository.getStores(any()) } returns flow { emit(storeList) }
 
         // when
         val result = getStoresUseCase(10, 1)
@@ -53,7 +53,7 @@ class GetStoresUseCaseTest {
     @Test
     fun `invoke should return an empty list when repository returns no stores`() = runTest {
         // given
-        coEvery { storeRepository.getStores(any(), any()) } returns flow { emit(emptyList()) }
+        coEvery { storeRepository.getStores(any()) } returns flow { emit(emptyList()) }
 
         //when
         val result = getStoresUseCase(10, 1)
@@ -73,8 +73,8 @@ class GetStoresUseCaseTest {
         val storeListPage2 = listOf(
             Store(code = "2", name = "Store 2", address = "Address 2")
         )
-        coEvery { storeRepository.getStores(10, 1) } returns flow { emit(storeListPage1) }
-        coEvery { storeRepository.getStores(10, 2) } returns flow { emit(storeListPage2) }
+        coEvery { storeRepository.getStores(1) } returns flow { emit(storeListPage1) }
+        coEvery { storeRepository.getStores(2) } returns flow { emit(storeListPage2) }
 
         // when
         val resultPage1 = getStoresUseCase(10, 1)

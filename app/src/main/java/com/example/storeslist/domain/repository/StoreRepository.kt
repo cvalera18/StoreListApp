@@ -4,5 +4,5 @@ import com.example.storeslist.domain.model.Store
 import kotlinx.coroutines.flow.Flow
 
 interface StoreRepository {
-    fun getStores(perPage: Int, page: Int): Flow<List<Store>>
+    fun getStores(page: Int): Flow<List<Store>>
 }

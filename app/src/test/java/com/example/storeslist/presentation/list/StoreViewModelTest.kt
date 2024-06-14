@@ -61,7 +61,6 @@ class StoreViewModelTest {
 
         // when
         viewModel.fetchStores(10, 1)
-        runCurrent() // Ensure all coroutines are completed
 
         // then
         val stores = viewModel.stores.first()
@@ -80,7 +79,6 @@ class StoreViewModelTest {
         viewModel.fetchStores(10, 1)
 
         // then
-        advanceUntilIdle()  // Ensure all coroutines complete
 
         // Check stores
         val stores = viewModel.stores.first()
@@ -111,7 +109,6 @@ class StoreViewModelTest {
 
         // Cuando estamos offline, agregamos la lista inicial
         viewModel.fetchStores(10, 1)
-        advanceUntilIdle()
 
         val storesOffline = viewModel.stores.first()
         assertEquals(initialStoreList, storesOffline)
@@ -122,7 +119,6 @@ class StoreViewModelTest {
 
         // Cuando volvemos a estar online, limpiamos la lista y restablecemos la página
         viewModel.fetchStores(10, 1)
-        advanceUntilIdle()
 
         val storesOnline = viewModel.stores.first()
         assertEquals(newStoreList, storesOnline)
@@ -150,7 +146,6 @@ class StoreViewModelTest {
 
         // when
         viewModel.fetchStores(10, 1)
-        advanceUntilIdle() // Wait until all tasks are completed
 
         // then
         var stores = viewModel.stores.first()
@@ -158,7 +153,6 @@ class StoreViewModelTest {
 
         // when
         viewModel.fetchStores(10, 2)
-        advanceUntilIdle() // Wait until all tasks are completed
 
         // then
         stores = viewModel.stores.first()
@@ -183,7 +177,6 @@ class StoreViewModelTest {
         viewModel = StoreViewModel(getStoresUseCase, networkUtils)
 
         // then
-        advanceUntilIdle()
         val stores = viewModel.stores.first()
         assertEquals(storeList, stores)
 
