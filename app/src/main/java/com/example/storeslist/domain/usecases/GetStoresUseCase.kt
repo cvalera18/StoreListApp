@@ -8,7 +8,13 @@ import javax.inject.Inject
 class GetStoresUseCase @Inject constructor(
     private val storeRepository: StoreRepository
 ) {
-    operator fun invoke(perPage: Int, page: Int): Flow<List<Store>> {
-        return storeRepository.getStores(page)
+    suspend operator fun invoke() {
+        storeRepository.getStores()
     }
+}
+
+class GetLocalStoresUseCase @Inject constructor(
+    private val storeRepository: StoreRepository
+) {
+    fun invoke(): Flow<List<Store>> = storeRepository.localStore
 }

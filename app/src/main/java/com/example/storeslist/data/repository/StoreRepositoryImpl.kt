@@ -7,11 +7,11 @@ import com.example.storeslist.data.network.NetworkUtils
 import com.example.storeslist.domain.mapper.toStore
 import com.example.storeslist.domain.model.Store
 import com.example.storeslist.domain.repository.StoreRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 
 class StoreRepositoryImpl(
     private val remoteDataSource: FrogmiRemoteDataSource,
@@ -20,18 +20,17 @@ class StoreRepositoryImpl(
 ) : StoreRepository {
 
     private val pages = MutableStateFlow<Links?>(null)
-    override fun getStores(page: Int): Flow<List<Store>> {
-        return flow {
+    override val localStore: Flow<List<Store>> = localDataSource.getStores()
+    override suspend fun getStores() {
+        withContext(Dispatchers.IO) {
             if (networkUtils.isInternetAvailable()) {
                 try {
                     val currentPageInfo = pages.value
 
-                    val remoteStores = if (currentPageInfo == null) { // First page
-                        remoteDataSource.getInitialStores(10,1)
-                    } else if (currentPageInfo.next != null) { // Have next page
-                        remoteDataSource.getNextStorePage(currentPageInfo.next)
-                    } else { // Last page
-                        null
+                    val remoteStores = when {
+                        currentPageInfo == null -> remoteDataSource.getInitialStores(10, 1) // First Page
+                        currentPageInfo.next != null -> remoteDataSource.getNextStorePage(currentPageInfo.next) // Next page
+                        else -> null // Last page
                     }
                     remoteStores?.let {response ->
                         pages.update {
@@ -39,15 +38,15 @@ class StoreRepositoryImpl(
                         }
                         val mappedStores = response.data.map { it.toStore() }
                         localDataSource.saveStores(mappedStores)
-                        emit(mappedStores)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    emitAll(localDataSource.getStores())
+                    throw e
                 }
             } else {
-                emitAll(localDataSource.getStores())
+                throw Exception("No internet connection")
             }
         }
+
     }
 }

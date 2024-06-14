@@ -38,14 +38,13 @@ class ListFragment : Fragment() {
         setupRecyclerView()
         setupSwipeRefresh()
         observeViewModel()
-        viewModel.fetchStores(PER_PAGE, INITIAL_PAGE)
+        viewModel.fetchStores()
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.stores.collect { storeList ->
-                    Log.d("ListFragment", "Store list updated: $storeList")
                     adapter.updateStores(storeList)
                 }
             }
@@ -62,7 +61,8 @@ class ListFragment : Fragment() {
                 }
                 // Multiline for the snackbar
                 val snackbarView = snackbar.view
-                val textView = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                val textView =
+                    snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
                 textView.maxLines = 5
                 snackbar.show()
                 viewModel.clearError()
@@ -86,10 +86,7 @@ class ListFragment : Fragment() {
                 val pastVisibleItems = llmanager.findFirstVisibleItemPosition()
 
                 if (!viewModel.isLoading.value!! && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                    viewModel.fetchStores(
-                        PER_PAGE,
-                        viewModel.getCurrentPage() + 1
-                    ) // Fetch next page of data
+                    viewModel.fetchStores() // Fetch next page of data
                 }
             }
         })
@@ -97,18 +94,13 @@ class ListFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         binding.swipe.setOnRefreshListener {
-            viewModel.fetchStores(PER_PAGE, INITIAL_PAGE)
+            viewModel.fetchStores()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val PER_PAGE = 10
-        private const val INITIAL_PAGE = 1
     }
 
 }
