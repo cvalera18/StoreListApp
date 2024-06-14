@@ -18,7 +18,6 @@ El proyecto sigue la arquitectura MVVM y Clean Architecture. A continuación se 
 - Manejo de Errores HTTP: La aplicación maneja errores HTTP (4XX, 5XX) mostrando mensajes de error en un Snackbar para notificar al usuario sobre los problemas de red.
 - StateFlow y LiveData: Se utilizan StateFlow y LiveData para el manejo reactivo de datos y su observación en la UI.
 - Almacenamiento Local: Utilización de Realm para el almacenamiento local de datos.
-- Snackbars para Errores: Muestra mensajes de error al usuario utilizando Snackbars.
 - Ícono Personalizado: La aplicación utiliza un ícono personalizado.
 
 ## Dependencias Principales
