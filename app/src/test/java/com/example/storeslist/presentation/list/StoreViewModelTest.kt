@@ -1,184 +1,132 @@
-//package com.example.storeslist.presentation.list
-//
-//import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-//import com.example.storeslist.MainDispatcherRule
-//import com.example.storeslist.data.network.NetworkUtils
-//import com.example.storeslist.domain.model.Store
-//import com.example.storeslist.domain.usecases.GetStoresUseCase
-//import com.example.storeslist.getOrAwaitValue
-//import io.mockk.MockKAnnotations
-//import io.mockk.coEvery
-//import io.mockk.impl.annotations.RelaxedMockK
-//import io.mockk.junit4.MockKRule
-//import junit.framework.TestCase.assertEquals
-//import junit.framework.TestCase.assertFalse
-//import junit.framework.TestCase.assertTrue
-//import kotlinx.coroutines.ExperimentalCoroutinesApi
-//import kotlinx.coroutines.flow.first
-//import kotlinx.coroutines.flow.flow
-//import kotlinx.coroutines.test.runTest
-//import org.junit.Before
-//import org.junit.Rule
-//import org.junit.Test
-//
-//@ExperimentalCoroutinesApi
-//class StoreViewModelTest {
-//
-//    @get:Rule
-//    val mainDispatcherRule = MainDispatcherRule()
-//
-//    @get:Rule
-//    val instantTaskExecutorRule = InstantTaskExecutorRule()
-//
-//    @get:Rule
-//    val mockkRule = MockKRule(this)
-//
-//    @RelaxedMockK
-//    private lateinit var getStoresUseCase: GetStoresUseCase
-//
-//    @RelaxedMockK
-//    private lateinit var networkUtils: NetworkUtils
-//
-//    private lateinit var viewModel: StoreViewModel
-//
-//    @Before
-//    fun setUp() {
-//        MockKAnnotations.init(this, relaxUnitFun = true)
-////        viewModel = StoreViewModel(getStoresUseCase, networkUtils)
-//    }
-//
-//    @Test
-//    fun `fetchStores should update stores and set isLoading to false when online`() = runTest {
-//        // given
-//        val storeList = listOf(
-//            Store(code = "1", name = "Store 1", address = "Address 1"),
-//            Store(code = "2", name = "Store 2", address = "Address 2")
-//        )
-//        coEvery { networkUtils.isInternetAvailable() } returns true
-//        coEvery { getStoresUseCase() } returns flow { emit(storeList) }
-//
-//        // when
-//        viewModel.fetchStores()
-//
-//        // then
-//        val stores = viewModel.stores.first()
-//        assertEquals(storeList, stores)
-//
-//        val isLoading = viewModel.isLoading.getOrAwaitValue()
-//        assertFalse(isLoading)
-//    }
-//
-//    @Test
-//    fun `fetchStores should set an error message when offline and stores are empty`() = runTest {
-//        // given
-//        coEvery { networkUtils.isInternetAvailable() } returns false
-//
-//        // when
-//        viewModel.fetchStores()
-//
-//        // then
-//
-//        // Check stores
-//        val stores = viewModel.stores.first()
-//        assertTrue(stores.isEmpty())
-//        // Check loading state
-//        val isLoading = viewModel.isLoading.getOrAwaitValue()
-//        assertFalse(isLoading)
-//        // Check error message
-//        val error = viewModel.error.getOrAwaitValue()
-//        assertEquals("No internet connection", error)
-//    }
-//
-//    @Test
-//    fun `fetchStores should clear the stores list and reset the current page when coming back online`() = runTest {
-//        // given
-//        val initialStoreList = listOf(
-//            Store(code = "1", name = "Store 1", address = "Address 1"),
-//            Store(code = "2", name = "Store 2", address = "Address 2")
-//        )
-//        val newStoreList = listOf(
-//            Store(code = "3", name = "Store 3", address = "Address 3"),
-//            Store(code = "4", name = "Store 4", address = "Address 4")
-//        )
-//
-//        // Simulamos estar offline primero
-//        coEvery { networkUtils.isInternetAvailable() } returns false
-//        coEvery { getStoresUseCase() } returns flow { emit(initialStoreList) }
-//
-//        // Cuando estamos offline, agregamos la lista inicial
-//        viewModel.fetchStores()
-//
-//        val storesOffline = viewModel.stores.first()
-//        assertEquals(initialStoreList, storesOffline)
-//
-//        // Simulamos que volvemos a estar online
-//        coEvery { networkUtils.isInternetAvailable() } returns true
-//        coEvery { getStoresUseCase() } returns flow { emit(newStoreList) }
-//
-//        // Cuando volvemos a estar online, limpiamos la lista y restablecemos la página
-//        viewModel.fetchStores()
-//
-//        val storesOnline = viewModel.stores.first()
-//        assertEquals(newStoreList, storesOnline)
-////        assertEquals(StoreViewModel.INITIAL_PAGE, viewModel.getCurrentPage())
-//
-//        val isLoading = viewModel.isLoading.getOrAwaitValue()
-//        assertFalse(isLoading)
-//    }
-//
-//    @Test
-//    fun `fetchStores should add stores to the current list when fetching additional pages`() = runTest {
-//        // given
-//        val initialStoreList = listOf(
-//            Store(code = "1", name = "Store 1", address = "Address 1"),
-//            Store(code = "2", name = "Store 2", address = "Address 2")
-//        )
-//        val additionalStoreList = listOf(
-//            Store(code = "3", name = "Store 3", address = "Address 3"),
-//            Store(code = "4", name = "Store 4", address = "Address 4")
-//        )
-//
-//        coEvery { networkUtils.isInternetAvailable() } returns true
-//        coEvery { getStoresUseCase() } returns flow { emit(initialStoreList) }
-//        coEvery { getStoresUseCase() } returns flow { emit(additionalStoreList) }
-//
-//        // when
-//        viewModel.fetchStores()
-//
-//        // then
-//        var stores = viewModel.stores.first()
-//        assertEquals(initialStoreList, stores)
-//
-//        // when
-//        viewModel.fetchStores()
-//
-//        // then
-//        stores = viewModel.stores.first()
-//        val expectedStoreList = initialStoreList + additionalStoreList
-//        assertEquals(expectedStoreList, stores)
-//
-//        val isLoading = viewModel.isLoading.getOrAwaitValue()
-//        assertFalse(isLoading)
-//    }
-//
-//    @Test
-//    fun `initialization should fetch stores`() = runTest {
-//        //given
-//        val storeList = listOf(
-//            Store(code = "1", name = "Store 1", address = "Address 1"),
-//            Store(code = "2", name = "Store 2", address = "Address 2")
-//        )
-//
-//        coEvery { getStoresUseCase() } returns flow { emit(storeList) }
-//
-//        // when
-////        viewModel = StoreViewModel(getStoresUseCase, networkUtils)
-//
-//        // then
-//        val stores = viewModel.stores.first()
-//        assertEquals(storeList, stores)
-//
-//        val isLoading = viewModel.isLoading.getOrAwaitValue()
-//        assertFalse(isLoading)
-//    }
-//}
+package com.example.storeslist.presentation.list
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
+import com.example.storeslist.MainDispatcherRule
+import com.example.storeslist.domain.model.Store
+import com.example.storeslist.domain.usecases.GetLocalStoresUseCase
+import com.example.storeslist.domain.usecases.GetStoresUseCase
+import com.example.storeslist.getOrAwaitValue
+import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.junit4.MockKRule
+import io.mockk.just
+import io.mockk.verify
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+
+@ExperimentalCoroutinesApi
+class StoreViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val mockkRule = MockKRule(this)
+
+    @RelaxedMockK
+    private lateinit var getStoresUseCase: GetStoresUseCase
+
+    @RelaxedMockK
+    private lateinit var getAllStoresUseCase: GetLocalStoresUseCase
+
+    private lateinit var viewModel: StoreViewModel
+
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+        viewModel = StoreViewModel(getStoresUseCase, getAllStoresUseCase)
+    }
+
+    @Test
+    fun `fetchStores should call getStoresUseCase and loading state is updated`() = runTest {
+        // given
+        coEvery { getStoresUseCase.invoke() } just Runs
+        val loadingList = mutableListOf<Boolean>()
+        val observer = Observer<Boolean> {
+            loadingList.add(it)
+        }
+        viewModel.isLoading.observeForever(observer)
+
+        // when
+        viewModel.fetchStores()
+
+        // then
+        coVerify { getStoresUseCase.invoke() }
+        assertEquals(2, loadingList.size)
+        assertTrue(loadingList[0])
+        assertFalse(loadingList[1])
+        viewModel.isLoading.removeObserver(observer)
+    }
+
+    @Test
+    fun `fetchStores should set an error message when it fails`() = runTest {
+        // given
+        val errorMessage = "Error message"
+        coEvery { getStoresUseCase.invoke() } throws Exception(errorMessage)
+
+        // when
+        viewModel.fetchStores()
+
+        // then
+        val error = viewModel.error.getOrAwaitValue()
+        assertEquals(errorMessage, error)
+    }
+
+    @Test
+    fun `when stores is collected, then call getAllStoresUseCase`() = runTest {
+        // given
+
+        every { getAllStoresUseCase.invoke() } returns flow { emit(emptyList()) }
+
+        // when
+        val job = launch {
+            viewModel.stores.collect {
+            }
+        }
+        verify { getAllStoresUseCase.invoke() }
+        job.cancel()
+    }
+
+    @Test
+    fun `when getAllStoresUseCase emits value, then stores is updated`() = runTest {
+        // given
+        val storeList = listOf(
+            Store(code = "1", name = "Store 1", address = "Address 1"),
+            Store(code = "2", name = "Store 2", address = "Address 2")
+        )
+        every { getAllStoresUseCase.invoke() } returns flow { emit(storeList) }
+        viewModel = StoreViewModel(getStoresUseCase, getAllStoresUseCase)
+
+        // when
+        val emittedStores = mutableListOf<List<Store>>()
+        val job = launch {
+            viewModel.stores.collect {
+                emittedStores.add(it)
+            }
+        }
+
+        advanceUntilIdle()
+
+        // then
+        assertEquals(1, emittedStores.size)
+        assertEquals(storeList, emittedStores[0])
+        job.cancel()
+    }
+}

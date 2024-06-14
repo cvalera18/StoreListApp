@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class StoreViewModel @Inject constructor(
     private val getStoresUseCase: GetStoresUseCase,
