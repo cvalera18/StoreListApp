@@ -7,4 +7,5 @@ interface LocalDataSource {
 
     fun getStores(): Flow<List<Store>>
     suspend fun saveStores(stores: List<Store>)
+    suspend fun clearStores()
 }

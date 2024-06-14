@@ -41,4 +41,11 @@ class LocalDataSourceImpl(private val realm: Realm) : LocalDataSource {
             }
         }
     }
+
+    override suspend fun clearStores() {
+        realm.write {
+            val results = this.query<StoreRealm>().find()
+            delete(results)
+        }
+    }
 }
